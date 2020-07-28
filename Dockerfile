@@ -7,7 +7,7 @@ RUN apt-get install curl software-properties-common -y
 
 RUN add-apt-repository ppa:longsleep/golang-backports \
   && apt-get update \
-  && apt-get install golang-go gcc git bzr jq pkg-config mesa-opencl-icd ocl-icd-opencl-dev cargo llvm clang opencl-headers wget clinfo -y
+  && apt-get install golang-go gcc git bzr jq pkg-config mesa-opencl-icd ocl-icd-opencl-dev cargo  llvm clang opencl-headers wget clinfo -y
 
 RUN curl -sSf https://sh.rustup.rs | sh -s -- -y
 RUN echo "export PATH=~/.cargo/bin:$PATH" >> ~/.bashrc
@@ -33,9 +33,9 @@ RUN sed -i "s/archive.ubuntu.com/mirrors.aliyun.com/g" /etc/apt/sources.list \
   && sed -i "s/security.ubuntu.com/mirrors.aliyun.com/g" /etc/apt/sources.list \
   && rm -f /etc/apt/sources.list.d/*
 
-COPY docker-entrypoint.sh /docker-entrypoint.sh
+#COPY docker-entrypoint.sh /docker-entrypoint.sh
 
-RUN chmod +x /docker-entrypoint.sh
+#RUN chmod +x /docker-entrypoint.sh
 
 # API port
 EXPOSE 1234/tcp
