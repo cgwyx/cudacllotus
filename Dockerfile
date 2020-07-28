@@ -23,10 +23,10 @@ FROM nvidia/cudagl:10.2-devel-ubuntu18.04
 #FROM apicciau/opencl_ubuntu:latest
 
 # Instead of running apt-get just copy the certs and binaries that keeps the runtime image nice and small
-#RUN apt-get update && \
+#RUN apt-get update -y && \
     #apt-get install sudo ca-certificates mesa-opencl-icd ocl-icd-opencl-dev clinfo -y && \
     #rm -rf /var/lib/apt/lists/*
-RUN apt-get update && \
+RUN apt-get update -y && \
     apt-get install clinfo -y
     
 COPY --from=build-env /lotus /lotus
