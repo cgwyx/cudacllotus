@@ -21,14 +21,14 @@ RUN git clone -b $BRANCH https://github.com/filecoin-project/lotus.git &&\
 # runtime container stage
 FROM nvidia/cudagl:10.2-devel-ubuntu18.04
 #FROM apicciau/opencl_ubuntu:latest
-#FROM nvidia/cuda:10.2-base-ubuntu18.04
-#FROM ubuntu:18.04
 
 # Instead of running apt-get just copy the certs and binaries that keeps the runtime image nice and small
 #RUN apt-get update && \
     #apt-get install sudo ca-certificates mesa-opencl-icd ocl-icd-opencl-dev clinfo -y && \
     #rm -rf /var/lib/apt/lists/*
-
+RUN apt-get update && \
+    apt-get install clinfo -y
+    
 COPY --from=build-env /lotus /lotus
 #COPY --from=build-env /etc/ssl/certs /etc/ssl/certs
 #COPY LOTUS_VERSION /VERSION
