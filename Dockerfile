@@ -1,68 +1,54 @@
-# build container stage
-FROM golang:1.14.2 AS build-env
+FROM nvidia/cudagl:10.2-devel-ubuntu18.04
+#FROM nvidia/cuda:10.2-base-ubuntu18.04
+#FROM docker.io/ubuntu:18.04
 
-# branch or tag of the lotus version to build
-#ARG BRANCH=interopnet
-ARG BRANCH=ntwk-calibration
+RUN apt-get update
+RUN apt-get install curl software-properties-common -y
 
-RUN echo "Building lotus from branch $BRANCH"
+RUN add-apt-repository ppa:longsleep/golang-backports \
+  && apt-get update \
+  && apt-get install golang-go gcc git bzr jq pkg-config mesa-opencl-icd ocl-icd-opencl-dev cargo llvm clang opencl-headers wget clinfo -y
 
-RUN apt-get update -y && \
-    apt-get install sudo curl git mesa-opencl-icd ocl-icd-opencl-dev gcc git bzr jq pkg-config -y
+RUN curl -sSf https://sh.rustup.rs | sh -s -- -y
+RUN echo "export PATH=~/.cargo/bin:$PATH" >> ~/.bashrc
 
-WORKDIR /
+#RUN mkdir -p /storage &&\
+#    mkdir -p /storage/tmpdir
 
-RUN git clone -b $BRANCH https://github.com/filecoin-project/lotus.git &&\
+#ENV LOTUS_STORAGE_PATH /storage/.lotusstorage
+#ENV LOTUS_PATH /storage/.lotus
+#ENV WORKER_PATH /storage/.lotusworker
+#ENV FIL_PROOFS_PARAMETER_CACHE /storage/filecoin-proof-parameters
+#ENV IPFS_GATEWAY https://proof-parameters.s3.cn-south-1.jdcloud-oss.com/ipfs/
+#ENV TMPDIR /storage/tmpdir
+
+RUN git clone -b ntwk-calibration https://github.com/filecoin-project/lotus.git &&\
     cd lotus &&\
     make clean all &&\
-    make install
+    make install &&\
+    make build bench
 
+VOLUME ["/home","/root","/var"]
 
-# runtime container stage
-FROM nvidia/cudagl:10.2-devel-ubuntu18.04
-#FROM apicciau/opencl_ubuntu:latest
+RUN sed -i "s/archive.ubuntu.com/mirrors.aliyun.com/g" /etc/apt/sources.list \
+  && sed -i "s/security.ubuntu.com/mirrors.aliyun.com/g" /etc/apt/sources.list \
+  && rm -f /etc/apt/sources.list.d/*
 
-# Instead of running apt-get just copy the certs and binaries that keeps the runtime image nice and small
-#RUN apt-get update -y && \
-    #apt-get install sudo ca-certificates mesa-opencl-icd ocl-icd-opencl-dev clinfo -y && \
-    #rm -rf /var/lib/apt/lists/*
-RUN apt-get update -y && \
-    apt-get install clinfo -y
-    
-COPY --from=build-env /lotus /lotus
-#COPY --from=build-env /etc/ssl/certs /etc/ssl/certs
-#COPY LOTUS_VERSION /VERSION
+COPY docker-entrypoint.sh /docker-entrypoint.sh
 
-#COPY --from=build-env /lib/x86_64-linux-gnu/libdl.so.2 /lib/libdl.so.2
-#COPY --from=build-env /lib/x86_64-linux-gnu/libutil.so.1 /lib/libutil.so.1 
-#COPY --from=build-env /usr/lib/x86_64-linux-gnu/libOpenCL.so.1.0.0 /lib/libOpenCL.so.1
-#COPY --from=build-env /lib/x86_64-linux-gnu/librt.so.1 /lib/librt.so.1
-#COPY --from=build-env /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/libgcc_s.so.1
-
-#COPY config/config.toml /root/config.toml
-#COPY scripts/entrypoint /bin/entrypoint
-
-RUN ln -s /lotus/lotus /usr/bin/lotus && \
-    ln -s /lotus/lotus-miner /usr/bin/lotus-miner && \
-    ln -s /lotus/lotus-worker /usr/bin/lotus-worker
-
-#chmod u+x /lotus
-
-VOLUME ["/root","/var"]
-
+RUN chmod +x /docker-entrypoint.sh
 
 # API port
 EXPOSE 1234/tcp
+
+# P2P port
+EXPOSE 1347/tcp
 
 # API port
 EXPOSE 2345/tcp
 
 # API port
 EXPOSE 3456/tcp
-
-# P2P port
-EXPOSE 1347/tcp
-
 
 ENV IPFS_GATEWAY=https://proof-parameters.s3.cn-south-1.jdcloud-oss.com/ipfs/
 
@@ -72,11 +58,8 @@ ENV FIL_PROOFS_USE_GPU_COLUMN_BUILDER=1
 
 ENV FIL_PROOFS_USE_GPU_TREE_BUILDER=1
 
-
+#WORKDIR /storage
 WORKDIR /lotus
 
-
+#ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["./lotus", "daemon", "&"]
-#ENTRYPOINT ["/bin/entrypoint"]
-#CMD ["-d"]
-
