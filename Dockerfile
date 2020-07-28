@@ -25,8 +25,7 @@ RUN echo "export PATH=~/.cargo/bin:$PATH" >> ~/.bashrc
 RUN git clone -b ntwk-calibration https://github.com/filecoin-project/lotus.git &&\
     cd lotus &&\
     make clean all &&\
-    make install &&\
-    make build bench
+    make install
 
 VOLUME ["/home","/root","/var"]
 
