@@ -1,14 +1,8 @@
 FROM nvidia/opencl:runtime-ubuntu18.04
 
-RUN apt-get update
-RUN apt-get install curl software-properties-common -y
-
-RUN add-apt-repository ppa:longsleep/golang-backports \
-  && apt-get update \
-  && apt-get install golang-go gcc git bzr jq pkg-config mesa-opencl-icd ocl-icd-opencl-dev cargo llvm clang opencl-headers wget clinfo -y
-
-RUN curl -sSf https://sh.rustup.rs | sh -s -- -y
-RUN echo "export PATH=~/.cargo/bin:$PATH" >> ~/.bashrc
+RUN apt-get update &&\
+    apt-get install golang-go gcc git bzr jq pkg-config mesa-opencl-icd ocl-icd-opencl-dev curl clinfo -y &&\
+    sudo apt upgrade
 
 RUN git clone -b ntwk-calibration https://github.com/filecoin-project/lotus.git &&\
     cd lotus &&\
