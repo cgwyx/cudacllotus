@@ -14,7 +14,7 @@ WORKDIR /
 
 ENV RUSTFLAGS="-C target-cpu=x86_64-unknown-linux-gnu -g" 
 
-ENV FFI_BUILD_FROM_SOURCE=1
+#ENV FFI_BUILD_FROM_SOURCE=1
 
 RUN git clone -b $BRANCH https://github.com/filecoin-project/lotus.git &&\
     cd lotus &&\
