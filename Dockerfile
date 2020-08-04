@@ -2,7 +2,7 @@ FROM nvidia/opencl:runtime-ubuntu18.04
 
 RUN apt-get update &&\
     apt-get install golang-go gcc git bzr jq pkg-config mesa-opencl-icd ocl-icd-opencl-dev curl   clinfo -y &&\
-    apt upgrade
+    apt upgrade -y 
 
 RUN git clone -b ntwk-calibration https://github.com/filecoin-project/lotus.git &&\
     cd lotus &&\
