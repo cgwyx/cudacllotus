@@ -4,8 +4,22 @@ RUN apt-get update &&\
     apt-get install golang-go gcc git bzr jq pkg-config mesa-opencl-icd ocl-icd-opencl-dev curl   clinfo -y &&\
     apt upgrade -y 
 
+ENV IPFS_GATEWAY=https://proof-parameters.s3.cn-south-1.jdcloud-oss.com/ipfs/
+
+ENV FIL_PROOFS_MAXIMIZE_CACHING=1
+
+ENV FIL_PROOFS_USE_GPU_COLUMN_BUILDER=1
+
+ENV FIL_PROOFS_USE_GPU_TREE_BUILDER=1
+
+ENV RUSTFLAGS="-C target-cpu=x86_64-unknown-linux-gnu -g" 
+
+ENV FFI_BUILD_FROM_SOURCE=1
+
 RUN git clone -b ntwk-calibration https://github.com/filecoin-project/lotus.git &&\
-    env RUSTFLAGS="-C target-cpu=x86_64-unknown-linux-gnu -g" FIL_PROOFS_USE_GPU_COLUMN_BUILDER=1 FIL_PROOFS_USE_GPU_TREE_BUILDER=1 FFI_BUILD_FROM_SOURCE=1 make clean all && make install
+    cd lotus &&\
+    make clean && make all &&\
+    make install
 
 VOLUME ["/root","/var"]
 
@@ -28,14 +42,6 @@ EXPOSE 2345/tcp
 
 # API port
 EXPOSE 3456/tcp
-
-ENV IPFS_GATEWAY=https://proof-parameters.s3.cn-south-1.jdcloud-oss.com/ipfs/
-
-ENV FIL_PROOFS_MAXIMIZE_CACHING=1
-
-ENV FIL_PROOFS_USE_GPU_COLUMN_BUILDER=1
-
-ENV FIL_PROOFS_USE_GPU_TREE_BUILDER=1
 
 #WORKDIR /storage
 WORKDIR /lotus
