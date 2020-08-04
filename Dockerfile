@@ -5,9 +5,11 @@ RUN apt-get update &&\
     apt upgrade -y 
 
 RUN git clone -b ntwk-calibration https://github.com/filecoin-project/lotus.git &&\
+    git reset --hard HEAD &&\
+    git pull &&\
     cd lotus &&\
-    make clean all &&\
-    make install
+    cat cat Makefile &&\
+    env RUSTFLAGS="-C target-cpu=native -g" FIL_PROOFS_USE_GPU_COLUMN_BUILDER=1 FIL_PROOFS_USE_GPU_TREE_BUILDER=1 FFI_BUILD_FROM_SOURCE=1 make clean all lotus-bench
 
 VOLUME ["/root","/var"]
 
