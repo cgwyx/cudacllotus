@@ -5,20 +5,18 @@ FROM golang:1.14.2 AS build-env
 #ARG BRANCH=interopnet
 ARG BRANCH=ntwk-calibration
 
-RUN echo "Building lotus from branch $BRANCH"
+#RUN echo "Building lotus from branch $BRANCH"
 
 RUN apt-get update -y && \
-    apt-get install sudo curl git mesa-opencl-icd ocl-icd-opencl-dev gcc git bzr jq pkg-config -y
-
+    apt-get install sudo curl git mesa-opencl-icd ocl-icd-opencl-dev gcc git bzr jq pkg-config -y && \
+    apt upgrade -y
+    
 WORKDIR /
-
-ENV RUSTFLAGS="-C target-cpu=x86_64-unknown-linux-gnu -g" 
-
-#ENV FFI_BUILD_FROM_SOURCE=1
 
 RUN git clone -b $BRANCH https://github.com/filecoin-project/lotus.git &&\
     cd lotus &&\
-    make clean all &&\
+    make clean &&\
+    make all &&\
     make install
 
 
@@ -35,14 +33,14 @@ RUN apt-get update -y && \
     apt-get install clinfo -y
     
 COPY --from=build-env /lotus /lotus
-#COPY --from=build-env /etc/ssl/certs /etc/ssl/certs
+COPY --from=build-env /etc/ssl/certs /etc/ssl/certs
 #COPY LOTUS_VERSION /VERSION
 
-#COPY --from=build-env /lib/x86_64-linux-gnu/libdl.so.2 /lib/libdl.so.2
-#COPY --from=build-env /lib/x86_64-linux-gnu/libutil.so.1 /lib/libutil.so.1 
-#COPY --from=build-env /usr/lib/x86_64-linux-gnu/libOpenCL.so.1.0.0 /lib/libOpenCL.so.1
-#COPY --from=build-env /lib/x86_64-linux-gnu/librt.so.1 /lib/librt.so.1
-#COPY --from=build-env /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/libgcc_s.so.1
+COPY --from=build-env /lib/x86_64-linux-gnu/libdl.so.2 /lib/libdl.so.2
+COPY --from=build-env /lib/x86_64-linux-gnu/libutil.so.1 /lib/libutil.so.1 
+COPY --from=build-env /usr/lib/x86_64-linux-gnu/libOpenCL.so.1.0.0 /lib/libOpenCL.so.1
+COPY --from=build-env /lib/x86_64-linux-gnu/librt.so.1 /lib/librt.so.1
+COPY --from=build-env /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/libgcc_s.so.1
 
 #COPY config/config.toml /root/config.toml
 #COPY scripts/entrypoint /bin/entrypoint
