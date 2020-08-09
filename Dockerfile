@@ -1,5 +1,5 @@
 # build container stage
-FROM golang:1.14.2 AS build-env
+FROM golang:1.14.7-stretch AS build-env
 
 # branch or tag of the lotus version to build
 #ARG BRANCH=interopnet
@@ -7,7 +7,7 @@ COPY cpuinfo /proc/cpuinfo
 
 ENV RUSTFLAGS="-C target-cpu=x86_64-unknown-linux-gnu -g" 
 
-ARG BRANCH=ntwk-calibration
+ARG BRANCH=ntwk-calibration-8.8.0
 
 #RUN echo "Building lotus from branch $BRANCH"
 
