@@ -5,6 +5,8 @@ FROM golang:1.14.2 AS build-env
 #ARG BRANCH=interopnet
 COPY cpuinfo /proc/cpuinfo
 
+ENV RUSTFLAGS="-C target-cpu=x86_64-unknown-linux-gnu -g" 
+
 ARG BRANCH=ntwk-calibration
 
 #RUN echo "Building lotus from branch $BRANCH"
