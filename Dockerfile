@@ -1,11 +1,12 @@
 # build container stage
-FROM golang:1.14.7-stretch AS build-env
+FROM golang:1.14.7-buster AS build-env
+# FROM golang:1.14.7-stretch AS build-env
 
 # branch or tag of the lotus version to build
 #ARG BRANCH=interopnet
-COPY cpuinfo /proc/cpuinfo
+#COPY cpuinfo /proc/cpuinfo
 
-ENV RUSTFLAGS="-C target-cpu=x86_64-unknown-linux-gnu -g" 
+#ENV RUSTFLAGS="-C target-cpu=x86_64-unknown-linux-gnu -g" 
 
 ARG BRANCH=ntwk-calibration-8.8.0
 
