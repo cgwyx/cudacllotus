@@ -15,7 +15,7 @@ WORKDIR /
 
 RUN git clone -b $BRANCH https://github.com/filecoin-project/lotus.git &&\
     cd lotus &&\
-    go env -w GOPROXY=https://goproxy.cn &&\
+    #go env -w GOPROXY=https://goproxy.cn &&\
     make clean &&\
     make all &&\
     make install
@@ -23,7 +23,7 @@ RUN git clone -b $BRANCH https://github.com/filecoin-project/lotus.git &&\
 
 # runtime container stage
 FROM nvidia/opencl:devel-ubuntu18.04
-FROM nvidia/opencl:runtime-ubuntu18.04
+#FROM nvidia/opencl:runtime-ubuntu18.04
 #FROM nvidia/cudagl:10.2-devel-ubuntu18.04
 #FROM apicciau/opencl_ubuntu:latest
 
