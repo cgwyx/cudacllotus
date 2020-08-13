@@ -13,7 +13,7 @@ ARG BRANCH=ntwk-calibration-8.8.0
 #RUN echo "Building lotus from branch $BRANCH"
 
 RUN apt-get update -y && \
-    apt-get install sudo curl git mesa-opencl-icd ocl-icd-opencl-dev gcc git bzr jq pkg-config -y && \
+    apt-get install curl git mesa-opencl-icd ocl-icd-opencl-dev gcc git bzr jq pkg-config -y && \
     apt upgrade -y
     
 WORKDIR /
@@ -26,7 +26,8 @@ RUN git clone -b $BRANCH https://github.com/filecoin-project/lotus.git &&\
 
 
 # runtime container stage
-FROM nvidia/opencl:runtime-ubuntu18.04
+FROM nvidia/opencl:devel-ubuntu18.04
+#FROM nvidia/opencl:runtime-ubuntu18.04
 #FROM nvidia/cudagl:10.2-devel-ubuntu18.04
 #FROM apicciau/opencl_ubuntu:latest
 
