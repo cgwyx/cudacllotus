@@ -8,14 +8,19 @@ ARG BRANCH=ntwk-calibration-8.13.1
 
 #RUN echo "Building lotus from branch $BRANCH"
 
-RUN apt-get update -y && \
-    apt-get install sudo curl git mesa-opencl-icd ocl-icd-opencl-dev gcc git bzr jq pkg-config -y
+#RUN apt-get update -y && \
+    #apt-get install sudo curl git mesa-opencl-icd ocl-icd-opencl-dev gcc git bzr jq pkg-config -y
     
+RUN apt-get update -y && \
+     apt-get install gcc git bzr jq pkg-config mesa-opencl-icd ocl-icd-opencl-dev cargo llvm clang opencl-headers wget -y
+RUN curl -sSf https://sh.rustup.rs | sh -s -- -y
+RUN echo "export PATH=~/.cargo/bin:$PATH" >> ~/.bashrc
+
 WORKDIR /
 
 RUN git clone -b $BRANCH https://github.com/filecoin-project/lotus.git &&\
     cd lotus &&\
-    #go env -w GOPROXY=https://goproxy.cn &&\
+    go env -w GOPROXY=https://goproxy.cn &&\
     make clean &&\
     make all &&\
     make install
@@ -81,7 +86,7 @@ ENV FIL_PROOFS_USE_GPU_TREE_BUILDER=1
 WORKDIR /lotus
 
 
-CMD ["./lotus", "daemon", "&"]
+CMD ["lotus", "daemon", "&"]
 #ENTRYPOINT ["/bin/entrypoint"]
 #CMD ["-d"]
 
